@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GridViewPasscon">
+
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="48dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/bi_idall_signin_h" />
+
+    <RelativeLayout
+        android:id="@+id/relative_grid"
+        android:layout_width="match_parent"
+        android:layout_height="275dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"
+        android:background="#e6031940">
+
+        <GridView
+            android:id="@+id/grid_view"
+            android:layout_width="300dp"
+            android:layout_height="275dp"
+            android:layout_centerHorizontal="true"
+            android:numColumns="5" />
+
+        <com.tungpt.PatternLockView.DrawLine
+            android:id="@+id/connect"
+            android:layout_width="300dp"
+            android:layout_height="275dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#0D4D65E4" />
+        <!--<com.andrognito.patternlockview.PatternLockView-->
+        <!--android:id="@+id/pattern_view"-->
+        <!--android:layout_width="310dp"-->
+        <!--android:layout_height="270dp"-->
+        <!--app:correctStateColor="#15EE20"-->
+        <!--app:dotCount="4"-->
+        <!--app:dotNormalSize="10dp"-->
+        <!--app:dotSelectedSize="20dp"-->
+        <!--app:normalStateColor="#fff"-->
+        <!--app:pathWidth="5dp"-->
+        <!--android:layout_centerHorizontal="true"/>-->
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_icon"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/relative_grid"
+        android:background="#E4E1E1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/img_1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00FFFFFF"/>
+
+        <Button
+            android:id="@+id/img_2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00FFFFFF"/>
+
+        <Button
+            android:id="@+id/img_3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00FFFFFF"/>
+
+        <Button
+            android:id="@+id/img_4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00FFFFFF"/>
+
+        <Button
+            android:id="@+id/img_5"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/color_crystal_clear"/>
+
+        <Button
+            android:id="@+id/img_6"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00FFFFFF"/>
+
+        <Button
+            android:id="@+id/img_7"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#00FFFFFF"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_reset"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@id/linear_icon"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/shape_button_next_press"
+        android:text="Reset"
+        android:textAllCaps="false"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:textStyle="normal" />
+
+</RelativeLayout>

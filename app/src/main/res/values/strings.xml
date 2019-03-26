@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="action_settings">Settings</string>
+    <string name="text_holder">Holder</string>
+    <string name="text_title">title</string>
+    <string name="text_website">Website</string>
+    <string name="text_id">ID</string>
+    <string name="text_password">Password</string>
+    <string name="float_text_add">Add new</string>
+    <string name="title_activity_draw_line">DrawLine</string>
+</resources>

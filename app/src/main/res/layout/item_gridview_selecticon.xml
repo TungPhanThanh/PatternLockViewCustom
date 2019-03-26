@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_item_gridview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <com.tungpt.PatternLockView.CustomImageView
+        android:id="@+id/im_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="9dp"
+        android:background="@drawable/box_progress_pushed" />
+
+    <TextView
+        android:id="@+id/txt_select_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="9dp"
+        android:background="@drawable/box_progress_pushed"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center_horizontal"
+        android:paddingTop="3dp"
+        android:text="5"
+        android:textAlignment="center"
+        android:textColor="#51beff"
+        android:textSize="30dp"
+        android:textStyle="normal"
+        android:visibility="gone" />
+</FrameLayout>
