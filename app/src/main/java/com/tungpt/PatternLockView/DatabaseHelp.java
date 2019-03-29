@@ -34,7 +34,7 @@ public class DatabaseHelp {
         return numberPhone;
     }
 
-    public static List<IconPasscon> getListIcon() {
+    public static List<Locations> getListIcon() {
         String passCode;
 
         passCode = "{\n" +
@@ -119,12 +119,13 @@ public class DatabaseHelp {
                 "        \"hint\": \"swimming\"\n" +
                 "    }\n" +
                 "};";
-        List<IconPasscon> listIcon = new ArrayList<>();
+        List<Locations> listIcon = new ArrayList<>();
+        int dem = 0;
         try {
             JSONObject jsonObject = new JSONObject(passCode);
             Iterator<String> iter = jsonObject.keys();
             while (iter.hasNext()) {
-                IconPasscon iconPasscon = new IconPasscon();
+                Locations iconPasscon = new Locations();
                 String key = iter.next();
                 JSONObject jsonObject1 = new JSONObject(jsonObject.getString(key));
                 int hinhAnh = jsonObject1.getInt("icon");
@@ -132,7 +133,9 @@ public class DatabaseHelp {
                 iconPasscon.setKey(key);
                 iconPasscon.setHinhAnh(hinhAnh);
                 iconPasscon.setHint(hint);
+                iconPasscon.setId(dem);
                 listIcon.add(iconPasscon);
+                dem++;
             }
         } catch (JSONException e) {
             e.printStackTrace();

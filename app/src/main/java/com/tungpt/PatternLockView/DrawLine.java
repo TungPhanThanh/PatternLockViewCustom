@@ -12,13 +12,13 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawLine extends View {
+public class DrawLine extends View implements IInterfaceChecked{
     Paint paint = new Paint();
     ArrayList<Line> lines = new ArrayList<Line>();
     int joinX, joinY = -1;
     int check = 0;
     List<Locations> listCircle = new ArrayList<>();
-    private static IInterSendata iInterSendata;
+    private static IInterSendData iInterSendData;
     int dem = 0;
     int copyX = -1;
     int copyY = -1;
@@ -29,6 +29,7 @@ public class DrawLine extends View {
 
     public DrawLine(Context context, AttributeSet attrs) {
         super(context, attrs);
+        GridViewPasscon.setInterfaceChecked(this);
         paint.setAntiAlias(true);
         paint.setStrokeWidth(6f);
         paint.setColor(Color.WHITE);
@@ -64,31 +65,40 @@ public class DrawLine extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 dem = 0;
-                copyX = -1;
-                copyY = -1;
+                count = 0;
+                copyX = -2;
+                copyY = -4;
                 if (lines.size() > 0) {
                     lines.clear();
                 }
                 if (listCircle.size() > 0) {
                     listCircle.clear();
                 }
-                iInterSendata.sendata(-1, "", 0);
+                iInterSendData.sendData(-1, "", 0,"",0);
+
                 for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
                     Locations locations = GridViewPasscon.getListLocations().get(i);
                     int xCenter = locations.getX();
                     int yCenter = locations.getY();
                     float radius = locations.getRadius();
+                    String key = locations.getKey();
+                    int hinhAnh = locations.getHinhAnh();
+                    int id = locations.getId();
+                    String hint = locations.getHint();
                     if (getDistance(event.getX(), event.getY(), xCenter, yCenter) <= radius) {
                         joinX = xCenter;
                         joinY = yCenter;
+                        Log.d("hihi", "Key :" + key);
+                        iInterSendData.sendData(dem, key, hinhAnh,hint,i);
+                        dem++;
                         lines.add(new Line(xCenter, yCenter));
+                        listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh,hint, id));
                     }
                 }
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-
-                if (lines.size() > 0 && dem < 6) {
+                if (lines.size() > 0 && dem < 7) {
                     Line current = lines.get(lines.size() - 1);
                     current.stopX = (int) event.getX();
                     current.stopY = (int) event.getY();
@@ -96,6 +106,7 @@ public class DrawLine extends View {
                     String key = "";
                     int hinhAnh = 0;
                     int id = 0;
+                    String hint = "";
                     //duyet mnag locatin de ve duong ke
                     for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
                         Locations locations = GridViewPasscon.getListLocations().get(i);
@@ -113,16 +124,16 @@ public class DrawLine extends View {
                     }
                     //dung de ve cac cham tron
                     if (copyX1 != copyX || copyY1 != copyY) {
-                        if (copyX1 < copyX || copyY1 < copyY) {
 
+                        if (copyX1 < copyX || copyY1 < copyY) {
                             for (int i = GridViewPasscon.getListLocations().size() - 1; i >= 0; i--) {
                                 Locations locations = GridViewPasscon.getListLocations().get(i);
                                 key = locations.getKey();
                                 hinhAnh = locations.getHinhAnh();
                                 id = locations.getId();
+                                hint = locations.getHint();
                                 int xCenter = locations.getX();
                                 int yCenter = locations.getY();
-                                Log.d("Position ", "onTouchEvent: " + xCenter + "/" + yCenter);
                                 float a = getDistance(copyX1, copyY1, copyX, copyY);
                                 float b = getDistance(copyX1, copyY1, xCenter, yCenter);
                                 float c = getDistance(copyX, copyY, xCenter, yCenter);
@@ -130,12 +141,17 @@ public class DrawLine extends View {
                                 float S = getS(P, a, b, c);
                                 if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
                                         (xCenter != copyX || yCenter != copyY)) {
-                                    listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh, id));
-                                    iInterSendata.sendata(dem, key, hinhAnh);
+
+                                    iInterSendData.sendData(dem, key, hinhAnh,hint,i);
                                     dem++;
-                                    Log.d("aaaa","ACTION_MOVE");
-                                    Log.d("aaaa", "X:Y : " + xCenter + "/" + yCenter);
-                                    Log.d("FIRST", "first touch: ");
+                                    if (dem <= 7) {
+                                        if (dem == 7)
+                                        {
+                                            current.stopX = xCenter;
+                                            current.stopY = yCenter;
+                                        }
+                                        listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh,hint, id));
+                                    }
                                 }
                             }
                         } else {
@@ -144,6 +160,7 @@ public class DrawLine extends View {
                                 key = locations.getKey();
                                 hinhAnh = locations.getHinhAnh();
                                 id = locations.getId();
+                                hint = locations.getHint();
                                 int xCenter = locations.getX();
                                 int yCenter = locations.getY();
                                 float a = getDistance(copyX1, copyY1, copyX, copyY);
@@ -152,12 +169,16 @@ public class DrawLine extends View {
                                 float P = (a + b + c) / 2;
                                 float S = getS(P, a, b, c);
                                 if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter && (xCenter != copyX || yCenter != copyY)) {
-
-                                    listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh, id));
-                                    iInterSendata.sendata(dem, key, hinhAnh);
+                                    iInterSendData.sendData(dem, key, hinhAnh,hint,i);
                                     dem++;
-                                    Log.d("aaaa","ACTION_MOVE1");
-                                    Log.d("aaaa", "X:Y : " + xCenter + "/" + yCenter);
+                                    if (dem <= 7) {
+                                        if (dem == 7)
+                                        {
+                                            current.stopX = xCenter;
+                                            current.stopY = yCenter;
+                                        }
+                                        listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh,hint, id));
+                                    }
                                 }
                             }
                         }
@@ -170,9 +191,6 @@ public class DrawLine extends View {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (dem == 0) {
-                    listCircle.clear();
-                }
                 if (lines.size() > 0) {
                     if (check == 0) {
                         Line current1 = lines.remove(lines.size() - 1);
@@ -181,19 +199,26 @@ public class DrawLine extends View {
                     } else {
                         check = 0;
                     }
-                    invalidate();
                 }
+                invalidate();
                 break;
         }
         return true;
     }
 
 
-    public static void setIIterface(IInterSendata iInterSendata) {
-        DrawLine.iInterSendata = iInterSendata;
+    public static void setIInterface(IInterSendData iInterSendData) {
+        DrawLine.iInterSendData = iInterSendData;
     }
 
-    public interface IInterSendata {
-        void sendata(int position, String key, int hinhAnh);
+    @Override
+    public void onTabSelected() {
+        lines.clear();
+        listCircle.clear();
+        invalidate();
+    }
+
+    public interface IInterSendData {
+        void sendData(int position, String key, int hinhAnh, String hint,int index);
     }
 }

@@ -7,14 +7,25 @@ public class IconPasscon implements Serializable {
     private String key;
     private int hinhAnh;
     private String hint;
+    private int position;
 
-    public IconPasscon(){
+    public IconPasscon() {
 
     }
-    public IconPasscon(String key, int hinhAnh, String hint) {
+
+    public IconPasscon(String key, int hinhAnh, String hint, int postion) {
         this.key = key;
         this.hinhAnh = hinhAnh;
         this.hint = hint;
+        this.position = postion;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public String getKey() {

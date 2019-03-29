@@ -1,23 +1,41 @@
 package com.tungpt.PatternLockView;
 
-public class Locations {
+public class Locations{
     private int x;
     private int y;
     private float radius;
     private String key;
     private int hinhAnh;
+    private String hint;
     private int mId;
 
     public Locations() {
 
     }
 
-    public Locations(int x, int y, float radius,String key,int hinhAnh, int mId) {
+    public Locations(int x, int y, float radius,String key,int hinhAnh,String hint, int mId) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.key=key;
         this.hinhAnh=hinhAnh;
+        this.mId = mId;
+        this.hint = hint;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
+    public int getmId() {
+        return mId;
+    }
+
+    public void setmId(int mId) {
         this.mId = mId;
     }
 
@@ -68,4 +86,18 @@ public class Locations {
     public void setId(int id) {
         mId = id;
     }
+
+    @Override
+    public String toString() {
+        return "Locations{" +
+                "x=" + x +
+                ", y=" + y +
+                ", radius=" + radius +
+                ", key='" + key + '\'' +
+                ", hinhAnh=" + hinhAnh +
+                ", hint='" + hint + '\'' +
+                ", mId=" + mId +
+                '}';
+    }
+
 }

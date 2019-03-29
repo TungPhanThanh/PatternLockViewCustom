@@ -7,19 +7,47 @@
     tools:context=".GridViewPasscon">
 
     <ImageView
+        android:id="@+id/img_logo"
         android:layout_width="110dp"
         android:layout_height="48dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:src="@drawable/bi_idall_signin_h" />
 
+    <LinearLayout
+        android:id="@+id/linear_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/img_logo"
+        android:layout_marginBottom="@dimen/dp_12"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/test1_button"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:background="@drawable/selected_button_left"
+            android:text="tap"
+            android:textColor="@color/selected_button_text" />
+
+        <Button
+            android:id="@+id/test2_button"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:background="@drawable/selected_button_right"
+            android:text="swipe"
+            android:textColor="@color/selected_button_text" />
+
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/relative_grid"
         android:layout_width="match_parent"
         android:layout_height="275dp"
+        android:layout_below="@+id/linear_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp"
-        android:background="#e6031940">
+        android:background="#E60C3888">
 
         <GridView
             android:id="@+id/grid_view"
@@ -28,25 +56,18 @@
             android:layout_centerHorizontal="true"
             android:numColumns="5" />
 
+        <ImageView
+            android:id="@+id/img_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#26273372"/>
+
         <com.tungpt.PatternLockView.DrawLine
-            android:id="@+id/connect"
-            android:layout_width="300dp"
-            android:layout_height="275dp"
+            android:id="@+id/view_draw_line"
+            android:layout_width="305dp"
+            android:layout_height="280dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="#0D4D65E4" />
-        <!--<com.andrognito.patternlockview.PatternLockView-->
-        <!--android:id="@+id/pattern_view"-->
-        <!--android:layout_width="310dp"-->
-        <!--android:layout_height="270dp"-->
-        <!--app:correctStateColor="#15EE20"-->
-        <!--app:dotCount="4"-->
-        <!--app:dotNormalSize="10dp"-->
-        <!--app:dotSelectedSize="20dp"-->
-        <!--app:normalStateColor="#fff"-->
-        <!--app:pathWidth="5dp"-->
-        <!--android:layout_centerHorizontal="true"/>-->
+            android:background="#00F7F7F7"/>
 
     </RelativeLayout>
 
@@ -63,47 +84,47 @@
             android:id="@+id/img_1"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="#00FFFFFF"/>
+            android:background="#00FFFFFF" />
 
         <Button
             android:id="@+id/img_2"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="#00FFFFFF"/>
+            android:background="#26FFFFFF" />
 
         <Button
             android:id="@+id/img_3"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="#00FFFFFF"/>
+            android:background="#26FFFFFF" />
 
         <Button
             android:id="@+id/img_4"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="#00FFFFFF"/>
+            android:background="#26FFFFFF" />
 
         <Button
             android:id="@+id/img_5"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@color/color_crystal_clear"/>
+            android:background="@color/color_crystal_clear" />
 
         <Button
             android:id="@+id/img_6"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="#00FFFFFF"/>
+            android:background="#00FFFFFF" />
 
         <Button
             android:id="@+id/img_7"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="#00FFFFFF"/>
+            android:background="#00FFFFFF" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/bt_reset"
+        android:id="@+id/btn_reset"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_below="@id/linear_icon"

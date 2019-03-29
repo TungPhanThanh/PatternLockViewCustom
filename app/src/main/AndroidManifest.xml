@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.tungpt.PatternLockView.DetailActivity" />
-        <activity android:name="com.tungpt.PatternLockView.ChangeListener" />
+        <activity android:name="com.tungpt.PatternLockView.ValueAdapter" />
         <activity
             android:name="com.tungpt.PatternLockView.CreatePasswordPattern"
             android:theme="@style/AppTheme.NoActionBar" />

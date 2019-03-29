@@ -17,7 +17,7 @@ import java.util.List;
 
 public class AdapterGridViewSelectIcon extends BaseAdapter{
     private Context context;
-    private List<IconPasscon> listIcon;
+    private List<Locations> listIcon;
     private int dem=-1;
     private static  List<Locations> list;
     private IILocations iiLocations;
@@ -30,7 +30,7 @@ public class AdapterGridViewSelectIcon extends BaseAdapter{
         AdapterGridViewSelectIcon.list = list;
     }
 
-    public AdapterGridViewSelectIcon(Context context, List<IconPasscon> listIcon,IILocations iiLocations) {
+    public AdapterGridViewSelectIcon(Context context, List<Locations> listIcon,IILocations iiLocations) {
         list=new ArrayList<>();
         this.context = context;
         this.listIcon = listIcon;
@@ -57,7 +57,7 @@ public class AdapterGridViewSelectIcon extends BaseAdapter{
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.item_gridview_selecticon, null);
         }
-        final IconPasscon iconPasscon = listIcon.get(position);
+        final Locations iconPasscon = listIcon.get(position);
         final ImageView imIcon = (ImageView) convertView.findViewById(R.id.im_icon);
         TextView txtSelectIcon = (TextView) convertView.findViewById(R.id.txt_select_icon);
         final FrameLayout frameLayout=(FrameLayout) convertView.findViewById(R.id.layout_item_gridview);
@@ -69,7 +69,6 @@ public class AdapterGridViewSelectIcon extends BaseAdapter{
             txtSelectIcon.setVisibility(View.VISIBLE);
             txtSelectIcon.setText(iconPasscon.getHinhAnh() + "");
             txtSelectIcon.setTextColor(context.getResources().getColor(R.color.white));
-
         }
 
         ViewTreeObserver vto = frameLayout.getViewTreeObserver();
@@ -80,7 +79,7 @@ public class AdapterGridViewSelectIcon extends BaseAdapter{
             public void onGlobalLayout() {
                 frameLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 if(position!=dem){
-                    list.add(getLocationPoint(finalConvertView,iconPasscon.getKey(),iconPasscon.getHinhAnh(),position));
+                    list.add(getLocationPoint(finalConvertView,iconPasscon.getKey(),iconPasscon.getHinhAnh(),position,iconPasscon.getHint()));
                     dem=position;
                 }
                 if(position==19){
@@ -91,11 +90,11 @@ public class AdapterGridViewSelectIcon extends BaseAdapter{
 
         return convertView;
     }
-    private Locations getLocationPoint(View view,String key,int hinhAnh,int id)
+    private Locations getLocationPoint(View view,String key,int hinhAnh,int id,String hint)
     {
         int x = (int) (view.getX() + view.getWidth()/2);
         int y = (int) (view.getY() +view.getHeight()/2);
-        return new Locations(x,y,view.getWidth()/2,key,hinhAnh,id);
+        return new Locations(x,y,view.getWidth()/2,key,hinhAnh,hint,id);
     }
     public interface IILocations{
         void sendListLocations(List<Locations> list);

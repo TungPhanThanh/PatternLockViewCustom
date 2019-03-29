@@ -29,12 +29,11 @@ public class DetailActivity extends AppCompatActivity {
         mButtonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Model model = new Model(mEditTextTitle.getText().toString(),
-                        mEditTextWebsite.getText().toString(),
-                        mEditTextId.getText().toString(),
-                        mEditTextPassword.getText().toString());
-                MainActivity.getmModelList().add(model);
-                Log.d("aaa",MainActivity.getmModelList().size()+"");
+//                ModelValue model = new ModelValue(mEditTextTitle.getText().toString(),
+//                        mEditTextWebsite.getText().toString(),
+//                        mEditTextId.getText().toString(),
+//                        mEditTextPassword.getText().toString());
+//                MainActivity.getmModelList().add(model);
                 Intent intent = MainActivity.getIntent(DetailActivity.this);
                 startActivity(intent);
             }

@@ -14,8 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
@@ -25,16 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton mFab;
     private FloatingActionButton mFab1, mFab2;
     boolean isFABOpen = false;
-    private static ArrayList<Model> mModelList;
     private static int flare = 0;
-
-    public static ArrayList<Model> getmModelList() {
-        return mModelList;
-    }
-
-    public static void setmModelList(ArrayList<Model> mModelList) {
-        MainActivity.mModelList = mModelList;
-    }
 
     public static Intent getIntent(Context context) {
         return new Intent(context, MainActivity.class);
@@ -45,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         flare++;
-        initData();
         initRecyclerView();
     }
 
@@ -57,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
                 new LinearLayoutManager(this,
                         LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new Adapter(this, mModelList);
         mRecyclerView.setAdapter(mAdapter);
 
         mFabLayout1 = findViewById(R.id.fabLayout1);
@@ -98,14 +85,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void initData() {
-        if (flare == 1) {
-            mModelList = new ArrayList<>();
-            mModelList.add(new Model("aaaa", "", "", ""));
-            mModelList.add(new Model("aaaa", "", "", ""));
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -122,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, ChangeListener.class);
-            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
