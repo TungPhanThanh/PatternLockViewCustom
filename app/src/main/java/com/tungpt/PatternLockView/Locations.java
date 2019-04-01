@@ -1,11 +1,11 @@
 package com.tungpt.PatternLockView;
 
-public class Locations{
+public class Locations {
     private int x;
     private int y;
     private float radius;
     private String key;
-    private int hinhAnh;
+    private int image;
     private String hint;
     private int mId;
 
@@ -13,12 +13,12 @@ public class Locations{
 
     }
 
-    public Locations(int x, int y, float radius,String key,int hinhAnh,String hint, int mId) {
+    public Locations(int x, int y, float radius, String key, int image, String hint, int mId) {
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.key=key;
-        this.hinhAnh=hinhAnh;
+        this.key = key;
+        this.image = image;
         this.mId = mId;
         this.hint = hint;
     }
@@ -39,12 +39,12 @@ public class Locations{
         this.mId = mId;
     }
 
-    public int getHinhAnh() {
-        return hinhAnh;
+    public int getImage() {
+        return image;
     }
 
-    public void setHinhAnh(int hinhAnh) {
-        this.hinhAnh = hinhAnh;
+    public void setImage(int image) {
+        this.image = image;
     }
 
     public String getKey() {
@@ -94,7 +94,7 @@ public class Locations{
                 ", y=" + y +
                 ", radius=" + radius +
                 ", key='" + key + '\'' +
-                ", hinhAnh=" + hinhAnh +
+                ", image=" + image +
                 ", hint='" + hint + '\'' +
                 ", mId=" + mId +
                 '}';

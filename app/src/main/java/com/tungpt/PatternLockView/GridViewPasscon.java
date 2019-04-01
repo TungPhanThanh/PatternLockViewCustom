@@ -4,7 +4,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -13,6 +12,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,14 +26,14 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
     private AdapterGridViewSelectIcon mAdapterGridViewSelectIcon;
     private GridView mGridView;
     private RelativeLayout relativeLayout;
-    private Button imOne, imTwo, imThree, imFour, im5, im6, im7;
+    private ImageView img1, img2, img3, img4, img5, img6, img7, img8, img9, img10;
+    private TextView text1, text2, text3, text4, text5, text6, text7, text8, text9, text10;
     private Button btn_reset;
-    private Button[] mImageViews;
+    private ImageView[] mImageViews;
+    private TextView[] mTextViews;
     private Button mButtonTap, mButtonSwipe;
     private View mViewDrawLine;
     private ImageView mImageViewContent;
-    private int dem = 0;
-    private int check = 0;
     private static List<Locations> listLocations;
     private static List<Locations> listLocationA;
     private static List<Locations> listLocationB;
@@ -58,32 +58,65 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
 
     public void initView() {
         listLocations = new ArrayList<>();
-        mGridView = (GridView) findViewById(R.id.grid_view);
-        relativeLayout = (RelativeLayout) findViewById(R.id.layout_main);
+        mGridView = findViewById(R.id.grid_view);
+        relativeLayout = findViewById(R.id.layout_main);
         mViewDrawLine = findViewById(R.id.view_draw_line);
         mImageViewContent = findViewById(R.id.img_content);
-        btn_reset = (Button) findViewById(R.id.btn_reset);
-        imOne = (Button) findViewById(R.id.img_1);
-        imTwo = (Button) findViewById(R.id.img_2);
-        imThree = (Button) findViewById(R.id.img_3);
-        imFour = (Button) findViewById(R.id.img_4);
-        im5 = (Button) findViewById(R.id.img_5);
-        im6 = (Button) findViewById(R.id.img_6);
-        im7 = (Button) findViewById(R.id.img_7);
+        btn_reset = findViewById(R.id.btn_reset);
+
+        img1 = findViewById(R.id.img_1);
+        img2 = findViewById(R.id.img_2);
+        img3 = findViewById(R.id.img_3);
+        img4 = findViewById(R.id.img_4);
+        img5 = findViewById(R.id.img_5);
+        img6 = findViewById(R.id.img_6);
+        img7 = findViewById(R.id.img_7);
+        img8 = findViewById(R.id.img_8);
+        img9 = findViewById(R.id.img_9);
+        img10 = findViewById(R.id.img_10);
+
+        text1 = findViewById(R.id.text_result1);
+        text2 = findViewById(R.id.text_result2);
+        text3 = findViewById(R.id.text_result3);
+        text4 = findViewById(R.id.text_result4);
+        text5 = findViewById(R.id.text_result5);
+        text6 = findViewById(R.id.text_result6);
+        text7 = findViewById(R.id.text_result7);
+        text8 = findViewById(R.id.text_result8);
+        text9 = findViewById(R.id.text_result9);
+        text10 = findViewById(R.id.text_result10);
+
         mButtonTap = findViewById(R.id.test1_button);
         mButtonSwipe = findViewById(R.id.test2_button);
+
         mButtonTap.setOnClickListener(this);
         mButtonSwipe.setOnClickListener(this);
         btn_reset.setOnClickListener(this);
         mButtonSwipe.performClick();
-        mImageViews = new Button[7];
-        mImageViews[0] = imOne;
-        mImageViews[1] = imTwo;
-        mImageViews[2] = imThree;
-        mImageViews[3] = imFour;
-        mImageViews[4] = im5;
-        mImageViews[5] = im6;
-        mImageViews[6] = im7;
+
+        mImageViews = new ImageView[10];
+        mImageViews[0] = img1;
+        mImageViews[1] = img2;
+        mImageViews[2] = img3;
+        mImageViews[3] = img4;
+        mImageViews[4] = img5;
+        mImageViews[5] = img6;
+        mImageViews[6] = img7;
+        mImageViews[7] = img8;
+        mImageViews[8] = img9;
+        mImageViews[9] = img10;
+
+        mTextViews = new TextView[10];
+        mTextViews[0] = text1;
+        mTextViews[1] = text2;
+        mTextViews[2] = text3;
+        mTextViews[3] = text4;
+        mTextViews[4] = text5;
+        mTextViews[5] = text6;
+        mTextViews[6] = text7;
+        mTextViews[7] = text8;
+        mTextViews[8] = text9;
+        mTextViews[9] = text10;
 
         listLocationA = new ArrayList<>();
         listLocationB = new ArrayList<>();
@@ -94,7 +127,7 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
         Collections.shuffle(mIconPasscons);
         for (int i = 0; i < mIconPasscons.size(); i++) {
             Locations locations = mIconPasscons.get(i);
-            listLocations.add(new Locations(0, 0, 0, locations.getKey(), locations.getHinhAnh(), locations.getHint(), i));
+            listLocations.add(new Locations(0, 0, 0, locations.getKey(), locations.getImage(), locations.getHint(), i));
         }
         mIconPasscons = listLocations;
         mAdapterGridViewSelectIcon = new AdapterGridViewSelectIcon(this, mIconPasscons, this);
@@ -114,24 +147,27 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
     }
 
     @Override
-    public void sendData(int position, String key, int hinhAnh, String hint, int index) {
+    public void sendData(int position, String key, int image, String hint, int index) {
         if (position == -1) {
             listLocationA.clear();
             for (int i = 0; i < mImageViews.length; i++) {
-                mImageViews[i].setBackgroundResource(R.color.color_crystal_clear);
-                mImageViews[i].setText("");
+                mImageViews[i].setVisibility(View.GONE);
+                mTextViews[i].setVisibility(View.GONE);
             }
+
         } else {
-            if (position < 7) {
+            if (position < 10) {
                 mAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                         R.anim.item_animation_right_side);
-                listLocationA.add(new Locations(0, 0, 0, key, hinhAnh, hint, index));
-                if ((hinhAnh + "").length() > 1) {
+                listLocationA.add(new Locations(0, 0, 0, key, image, hint, index));
+                if ((image + "").length() > 1) {
+                    mImageViews[position].setVisibility(View.VISIBLE);
                     mImageViews[position].startAnimation(mAnimation);
-                    mImageViews[position].setBackgroundResource(hinhAnh);
+                    mImageViews[position].setImageResource(image);
                 } else {
-                    mImageViews[position].startAnimation(mAnimation);
-                    mImageViews[position].setText(hinhAnh + "");
+                    mTextViews[position].setVisibility(View.VISIBLE);
+                    mTextViews[position].startAnimation(mAnimation);
+                    mTextViews[position].setText(image + "");
                 }
             }
         }
@@ -189,19 +225,19 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
                         }
                     }
                     if (dem == 0) {
-                        listLocationB.add(new Locations(0, 0, 0, location.getKey(), location.getHinhAnh(), location.getHint(), i));
+                        listLocationB.add(new Locations(0, 0, 0, location.getKey(), location.getImage(), location.getHint(), i));
                     }
                 }
                 //random B
                 Collections.shuffle(listLocationB);
                 for (int i = 0; i < listLocationB.size(); i++) {
                     Locations location = listLocationB.get(i);
-                    locationsListC.add(new Locations(0, 0, 0, location.getKey(), location.getHinhAnh(), location.getHint(), i));
+                    locationsListC.add(new Locations(0, 0, 0, location.getKey(), location.getImage(), location.getHint(), i));
                 }
                 for (int i = 0; i < listLocations.size(); i++) {
                     int dem = 0;
-                    Locations location=null;
-                    if (locationsListC.size() !=0)
+                    Locations location = null;
+                    if (locationsListC.size() != 0)
                         location = locationsListC.get(0);
                     for (int j = 0; j < listLocationA.size(); j++) {
                         Locations locations = listLocationA.get(j);
@@ -212,8 +248,7 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
                     }
                     location.setmId(i);
                     listLocations.set(i, location);
-                    if (dem!=1)
-                    {
+                    if (dem != 1) {
                         locationsListC.remove(0);
                     }
                 }
@@ -227,7 +262,7 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
         }
     }
 
-    public static void setInterfaceChecked(IInterfaceChecked sInterfaceChecked){
+    public static void setInterfaceChecked(IInterfaceChecked sInterfaceChecked) {
         GridViewPasscon.sInterfaceChecked = sInterfaceChecked;
     }
 }

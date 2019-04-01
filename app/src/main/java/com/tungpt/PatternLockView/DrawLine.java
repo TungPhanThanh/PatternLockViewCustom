@@ -82,7 +82,7 @@ public class DrawLine extends View implements IInterfaceChecked{
                     int yCenter = locations.getY();
                     float radius = locations.getRadius();
                     String key = locations.getKey();
-                    int hinhAnh = locations.getHinhAnh();
+                    int hinhAnh = locations.getImage();
                     int id = locations.getId();
                     String hint = locations.getHint();
                     if (getDistance(event.getX(), event.getY(), xCenter, yCenter) <= radius) {
@@ -98,7 +98,7 @@ public class DrawLine extends View implements IInterfaceChecked{
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (lines.size() > 0 && dem < 7) {
+                if (lines.size() > 0 && dem < 10) {
                     Line current = lines.get(lines.size() - 1);
                     current.stopX = (int) event.getX();
                     current.stopY = (int) event.getY();
@@ -129,7 +129,7 @@ public class DrawLine extends View implements IInterfaceChecked{
                             for (int i = GridViewPasscon.getListLocations().size() - 1; i >= 0; i--) {
                                 Locations locations = GridViewPasscon.getListLocations().get(i);
                                 key = locations.getKey();
-                                hinhAnh = locations.getHinhAnh();
+                                hinhAnh = locations.getImage();
                                 id = locations.getId();
                                 hint = locations.getHint();
                                 int xCenter = locations.getX();
@@ -144,8 +144,8 @@ public class DrawLine extends View implements IInterfaceChecked{
 
                                     iInterSendData.sendData(dem, key, hinhAnh,hint,i);
                                     dem++;
-                                    if (dem <= 7) {
-                                        if (dem == 7)
+                                    if (dem <= 10) {
+                                        if (dem == 10)
                                         {
                                             current.stopX = xCenter;
                                             current.stopY = yCenter;
@@ -158,7 +158,7 @@ public class DrawLine extends View implements IInterfaceChecked{
                             for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
                                 Locations locations = GridViewPasscon.getListLocations().get(i);
                                 key = locations.getKey();
-                                hinhAnh = locations.getHinhAnh();
+                                hinhAnh = locations.getImage();
                                 id = locations.getId();
                                 hint = locations.getHint();
                                 int xCenter = locations.getX();
@@ -171,8 +171,8 @@ public class DrawLine extends View implements IInterfaceChecked{
                                 if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter && (xCenter != copyX || yCenter != copyY)) {
                                     iInterSendData.sendData(dem, key, hinhAnh,hint,i);
                                     dem++;
-                                    if (dem <= 7) {
-                                        if (dem == 7)
+                                    if (dem <= 10) {
+                                        if (dem == 10)
                                         {
                                             current.stopX = xCenter;
                                             current.stopY = yCenter;

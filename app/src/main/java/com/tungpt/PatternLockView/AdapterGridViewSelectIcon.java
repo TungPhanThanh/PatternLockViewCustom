@@ -15,11 +15,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterGridViewSelectIcon extends BaseAdapter{
+public class AdapterGridViewSelectIcon extends BaseAdapter {
     private Context context;
     private List<Locations> listIcon;
-    private int dem=-1;
-    private static  List<Locations> list;
+    private int dem = -1;
+    private static List<Locations> list;
     private IILocations iiLocations;
 
     public static List<Locations> getList() {
@@ -30,12 +30,13 @@ public class AdapterGridViewSelectIcon extends BaseAdapter{
         AdapterGridViewSelectIcon.list = list;
     }
 
-    public AdapterGridViewSelectIcon(Context context, List<Locations> listIcon,IILocations iiLocations) {
-        list=new ArrayList<>();
+    public AdapterGridViewSelectIcon(Context context, List<Locations> listIcon, IILocations iiLocations) {
+        list = new ArrayList<>();
         this.context = context;
         this.listIcon = listIcon;
-        this.iiLocations=iiLocations;
+        this.iiLocations = iiLocations;
     }
+
     @Override
     public int getCount() {
         return listIcon.size();
@@ -60,29 +61,29 @@ public class AdapterGridViewSelectIcon extends BaseAdapter{
         final Locations iconPasscon = listIcon.get(position);
         final ImageView imIcon = (ImageView) convertView.findViewById(R.id.im_icon);
         TextView txtSelectIcon = (TextView) convertView.findViewById(R.id.txt_select_icon);
-        final FrameLayout frameLayout=(FrameLayout) convertView.findViewById(R.id.layout_item_gridview);
-        String flagHinhAnh = iconPasscon.getHinhAnh() + "";
+        final FrameLayout frameLayout = (FrameLayout) convertView.findViewById(R.id.layout_item_gridview);
+        String flagHinhAnh = iconPasscon.getImage() + "";
         if (flagHinhAnh.length() > 1) {
-            imIcon.setImageResource(iconPasscon.getHinhAnh());
+            imIcon.setImageResource(iconPasscon.getImage());
         } else {
             imIcon.setVisibility(View.GONE);
             txtSelectIcon.setVisibility(View.VISIBLE);
-            txtSelectIcon.setText(iconPasscon.getHinhAnh() + "");
+            txtSelectIcon.setText(iconPasscon.getImage() + "");
             txtSelectIcon.setTextColor(context.getResources().getColor(R.color.white));
         }
 
         ViewTreeObserver vto = frameLayout.getViewTreeObserver();
         final View finalConvertView = convertView;
-        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onGlobalLayout() {
                 frameLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                if(position!=dem){
-                    list.add(getLocationPoint(finalConvertView,iconPasscon.getKey(),iconPasscon.getHinhAnh(),position,iconPasscon.getHint()));
-                    dem=position;
+                if (position != dem) {
+                    list.add(getLocationPoint(finalConvertView, iconPasscon.getKey(), iconPasscon.getImage(), position, iconPasscon.getHint()));
+                    dem = position;
                 }
-                if(position==19){
+                if (position == 19) {
                     iiLocations.sendListLocations(list);
                 }
             }
@@ -90,13 +91,14 @@ public class AdapterGridViewSelectIcon extends BaseAdapter{
 
         return convertView;
     }
-    private Locations getLocationPoint(View view,String key,int hinhAnh,int id,String hint)
-    {
-        int x = (int) (view.getX() + view.getWidth()/2);
-        int y = (int) (view.getY() +view.getHeight()/2);
-        return new Locations(x,y,view.getWidth()/2,key,hinhAnh,hint,id);
+
+    private Locations getLocationPoint(View view, String key, int hinhAnh, int id, String hint) {
+        int x = (int) (view.getX() + view.getWidth() / 2);
+        int y = (int) (view.getY() + view.getHeight() / 2);
+        return new Locations(x, y, view.getWidth() / 2, key, hinhAnh, hint, id);
     }
-    public interface IILocations{
+
+    public interface IILocations {
         void sendListLocations(List<Locations> list);
     }
 }

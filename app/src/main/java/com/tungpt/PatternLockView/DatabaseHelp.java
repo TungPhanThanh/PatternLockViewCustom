@@ -79,43 +79,43 @@ public class DatabaseHelp {
                 "        \"hint\": \"9\"\n" +
                 "    },\n" +
                 "    \"10\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_badminton + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_badminton_color + ",\n" +
                 "        \"hint\": \"badminton\"\n" +
                 "    },\n" +
                 "    \"11\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_baseball + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_baseball_color + ",\n" +
                 "        \"hint\": \"baseball\"\n" +
                 "    },\n" +
                 "    \"12\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_basketball + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_basketball_color + ",\n" +
                 "        \"hint\": \"basketball\"\n" +
                 "    },\n" +
                 "    \"13\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_bicycle + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_bicycle_color + ",\n" +
                 "        \"hint\": \"bicycle\"\n" +
                 "    },\n" +
                 "    \"14\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_bowling + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_bowling_color + ",\n" +
                 "        \"hint\": \"bowling\"\n" +
                 "    },\n" +
                 "    \"15\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_football + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_football_color + ",\n" +
                 "        \"hint\": \"football\"\n" +
                 "    },\n" +
                 "    \"16\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_golf + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_golf_color + ",\n" +
                 "        \"hint\": \"golf\"\n" +
                 "    },\n" +
                 "    \"17\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_pingpong + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_pingpong_color + ",\n" +
                 "        \"hint\": \"pingpong\"\n" +
                 "    },\n" +
                 "    \"18\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_ski + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_ski_color + ",\n" +
                 "        \"hint\": \"ski\"\n" +
                 "    },\n" +
                 "    \"19\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_swimming + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_swimming_color + ",\n" +
                 "        \"hint\": \"swimming\"\n" +
                 "    }\n" +
                 "};";
@@ -131,7 +131,7 @@ public class DatabaseHelp {
                 int hinhAnh = jsonObject1.getInt("icon");
                 String hint = jsonObject1.getString("hint");
                 iconPasscon.setKey(key);
-                iconPasscon.setHinhAnh(hinhAnh);
+                iconPasscon.setImage(hinhAnh);
                 iconPasscon.setHint(hint);
                 iconPasscon.setId(dem);
                 listIcon.add(iconPasscon);
