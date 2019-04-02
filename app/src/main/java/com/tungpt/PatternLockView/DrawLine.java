@@ -64,6 +64,7 @@ public class DrawLine extends View implements IInterfaceChecked{
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                paint.setColor(Color.WHITE);
                 dem = 0;
                 count = 0;
                 copyX = -2;
@@ -199,6 +200,11 @@ public class DrawLine extends View implements IInterfaceChecked{
                     } else {
                         check = 0;
                     }
+                }
+                if (listCircle.size() < 4){
+                    paint.setColor(Color.RED);
+                }else {
+                    paint.setColor(Color.GREEN);
                 }
                 invalidate();
                 break;

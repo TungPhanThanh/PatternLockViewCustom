@@ -151,6 +151,8 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
         if (position == -1) {
             listLocationA.clear();
             for (int i = 0; i < mImageViews.length; i++) {
+                mAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                        R.anim.item_animation_right_side);
                 mImageViews[i].setVisibility(View.GONE);
                 mTextViews[i].setVisibility(View.GONE);
             }
@@ -162,13 +164,14 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
                 listLocationA.add(new Locations(0, 0, 0, key, image, hint, index));
                 if ((image + "").length() > 1) {
                     mImageViews[position].setVisibility(View.VISIBLE);
-                    mImageViews[position].startAnimation(mAnimation);
+//                    mImageViews[position].startAnimation(mAnimation);
                     mImageViews[position].setImageResource(image);
                 } else {
                     mTextViews[position].setVisibility(View.VISIBLE);
-                    mTextViews[position].startAnimation(mAnimation);
+//                    mTextViews[position].startAnimation(mAnimation);
                     mTextViews[position].setText(image + "");
                 }
+
             }
         }
     }
