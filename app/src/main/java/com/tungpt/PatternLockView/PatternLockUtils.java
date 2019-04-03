@@ -1,10 +1,5 @@
 package com.tungpt.PatternLockView;
 
-import android.content.Context;
-import android.provider.Settings;
-import android.widget.EditText;
-import android.widget.TextView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,32 +7,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class DatabaseHelp {
-    public static String[] hanlldingPasscode(String jsonuserPost) {
-        String[] strings = new String[20];
-        try {
-            JSONObject jsonObject = new JSONObject(jsonuserPost);
-            String passCodeResult = jsonObject.getString("PassCodes");
-            strings = passCodeResult.split(",");
-            for (int i = 0; i < strings.length; i++) {
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return strings;
-    }
-
-    public static String getPhoneNumber(TextView textView, EditText editText) {
-        String telePhone = textView.getText().toString();
-        String mtelePhone = telePhone.substring(1, telePhone.length());
-        String numberPhone = mtelePhone + "-" + editText.getText().toString();
-        return numberPhone;
-    }
-
+public class PatternLockUtils {
     public static List<Locations> getListIcon() {
-        String passCode;
-
-        passCode = "{\n" +
+        int mImage;
+        int mCount = 0;
+        String mKey;
+        String mHint;
+        String mPassCode;
+        mPassCode = "{\n" +
                 "    \"0\": {\n" +
                 "        \"icon\": \"0\",\n" +
                 "        \"hint\": \"0\"\n" +
@@ -79,73 +56,66 @@ public class DatabaseHelp {
                 "        \"hint\": \"9\"\n" +
                 "    },\n" +
                 "    \"10\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_badminton_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_badminton + ",\n" +
                 "        \"hint\": \"badminton\"\n" +
                 "    },\n" +
                 "    \"11\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_baseball_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_baseball + ",\n" +
                 "        \"hint\": \"baseball\"\n" +
                 "    },\n" +
                 "    \"12\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_basketball_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_basketball + ",\n" +
                 "        \"hint\": \"basketball\"\n" +
                 "    },\n" +
                 "    \"13\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_bicycle_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_bicycle + ",\n" +
                 "        \"hint\": \"bicycle\"\n" +
                 "    },\n" +
                 "    \"14\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_bowling_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_bowling + ",\n" +
                 "        \"hint\": \"bowling\"\n" +
                 "    },\n" +
                 "    \"15\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_football_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_football + ",\n" +
                 "        \"hint\": \"football\"\n" +
                 "    },\n" +
                 "    \"16\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_golf_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_golf + ",\n" +
                 "        \"hint\": \"golf\"\n" +
                 "    },\n" +
                 "    \"17\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_pingpong_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_pingpong + ",\n" +
                 "        \"hint\": \"pingpong\"\n" +
                 "    },\n" +
                 "    \"18\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_ski_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_ski + ",\n" +
                 "        \"hint\": \"ski\"\n" +
                 "    },\n" +
                 "    \"19\": {\n" +
-                "        \"icon\": " + R.drawable.icon_theme_sports_swimming_color + ",\n" +
+                "        \"icon\": " + R.drawable.icon_theme_sports_swimming + ",\n" +
                 "        \"hint\": \"swimming\"\n" +
                 "    }\n" +
                 "};";
         List<Locations> listIcon = new ArrayList<>();
-        int dem = 0;
         try {
-            JSONObject jsonObject = new JSONObject(passCode);
-            Iterator<String> iter = jsonObject.keys();
-            while (iter.hasNext()) {
+            JSONObject jsonObject = new JSONObject(mPassCode);
+            Iterator<String> iterator = jsonObject.keys();
+            while (iterator.hasNext()) {
                 Locations iconPasscon = new Locations();
-                String key = iter.next();
-                JSONObject jsonObject1 = new JSONObject(jsonObject.getString(key));
-                int hinhAnh = jsonObject1.getInt("icon");
-                String hint = jsonObject1.getString("hint");
-                iconPasscon.setKey(key);
-                iconPasscon.setImage(hinhAnh);
-                iconPasscon.setHint(hint);
-                iconPasscon.setId(dem);
+                mKey = iterator.next();
+                JSONObject jsonObject1 = new JSONObject(jsonObject.getString(mKey));
+                mImage = jsonObject1.getInt("icon");
+                mHint = jsonObject1.getString("hint");
+                iconPasscon.setKey(mKey);
+                iconPasscon.setImage(mImage);
+                iconPasscon.setHint(mHint);
+                iconPasscon.setId(mCount);
                 listIcon.add(iconPasscon);
-                dem++;
+                mCount++;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return listIcon;
-    }
-
-    public static String getDeviceId(Context context) {
-        String android_id = Settings.Secure.getString(context.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-        return android_id;
     }
 }

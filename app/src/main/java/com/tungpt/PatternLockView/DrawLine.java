@@ -5,35 +5,39 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawLine extends View implements IInterfaceChecked {
-    Paint paint = new Paint();
-    ArrayList<Line> lines = new ArrayList<Line>();
-    int joinX, joinY = -1;
-    int check = 0;
-    List<Locations> listCircle = new ArrayList<>();
-    private static IInterSendData iInterSendData;
-    int dem = 0;
-    int copyX = -1;
-    int copyY = -1;
-    int copyX1 = -1;
-    int copyY1 = -1;
-    float EPSILON = 0.001f;
-    int count = 0;
-    int xCenter;
-    int yCenter;
+public class DrawLine extends View implements ISendDataService {
+    private final float RADIUS = getResources().getDimension(R.dimen._5sdp);
+    private Line current;
     private Locations locations;
-
+    private Paint paint = new Paint();
+    private Paint pCircle = new Paint();
+    private List<Locations> listCircle = new ArrayList<>();
+    private ArrayList<Line> lines = new ArrayList<>();
+    private boolean indexes = true;
+    private int joinX = -1;
+    private int joinY = -1;
+    private int check = 0;
+    private static ISendDataService sISendDataService;
+    private int mCount = 0;
+    private int copyX = -1;
+    private int copyY = -1;
+    private int copyX1 = -1;
+    private int copyY1 = -1;
+    private int mRadiusPoint;
+    private String keyOnMove;
+    private int imageOnMove;
+    private int idOnMove;
+    private String hintOnMove;
 
     public DrawLine(Context context, AttributeSet attrs) {
         super(context, attrs);
-        GridViewPasscon.setInterfaceChecked(this);
+        PatternLockView.setISendDataService(this);
         paint.setAntiAlias(true);
         paint.setStrokeWidth(6f);
         paint.setColor(Color.WHITE);
@@ -43,7 +47,7 @@ public class DrawLine extends View implements IInterfaceChecked {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
+        drawCircles(canvas);
         for (Line l : lines) {
             canvas.drawLine(l.startX, l.startY, l.stopX, l.stopY, paint);
         }
@@ -55,94 +59,87 @@ public class DrawLine extends View implements IInterfaceChecked {
         }
     }
 
-    public float getDistance(float x, float y, float x1, float y1) {
-        return (float) Math.sqrt(Math.pow((x1 - x), 2) + Math.pow((y1 - y), 2));
+    public float getDistance(float x, float y, int x1, int y1) {
+        return (int) Math.sqrt(Math.pow((x1 - x), 2) + Math.pow((y1 - y), 2));
     }
 
-    public float getS(float P, float a, float b, float c) {
-        return (float) Math.sqrt(P * (P - a) * (P - b) * (P - c));
+    public int getS(int P, int a, int b, int c) {
+        return (int) Math.sqrt(P * (P - a) * (P - b) * (P - c));
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                paint.setColor(Color.WHITE);
-                dem = 0;
-                count = 0;
-                copyX = -2;
-                copyY = -4;
-                if (lines.size() > 0) {
-                    lines.clear();
-                }
-                if (listCircle.size() > 0) {
-                    listCircle.clear();
-                }
-                iInterSendData.sendData(-1, "", 0, "", 0);
-
-                for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
-                    Locations locations = GridViewPasscon.getListLocations().get(i);
-                    int xCenter = locations.getX();
-                    int yCenter = locations.getY();
-                    float radius = locations.getRadius();
-                    String key = locations.getKey();
-                    int hinhAnh = locations.getImage();
-                    int id = locations.getId();
-                    String hint = locations.getHint();
-                    if (getDistance(event.getX(), event.getY(), xCenter, yCenter) <= radius) {
-                        joinX = xCenter;
-                        joinY = yCenter;
-                        Log.d("hihi", "Key :" + key);
-                        iInterSendData.sendData(dem, key, hinhAnh, hint, i);
-                        dem++;
-                        lines.add(new Line(xCenter, yCenter));
-                        listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh, hint, id));
-                    }
-                }
-                invalidate();
+                onActionDown(event);
                 break;
             case MotionEvent.ACTION_MOVE:
                 onActionMove(event);
                 break;
             case MotionEvent.ACTION_UP:
-                if (lines.size() > 0) {
-                    if (check == 0) {
-                        Line current1 = lines.remove(lines.size() - 1);
-                        current1.stopX = joinX;
-                        current1.stopY = joinY;
-                    } else {
-                        check = 0;
-                    }
-                }
-                if (listCircle.size() < 4) {
-                    paint.setColor(Color.RED);
-                } else {
-                    paint.setColor(Color.GREEN);
-                }
-                invalidate();
+                onActionUp();
                 break;
         }
         return true;
     }
 
-    public void onActionMove(MotionEvent event) {
-        if (lines.size() > 0 && dem < 10) {
-            Line current = lines.get(lines.size() - 1);
-            current.stopX = (int) event.getX();
-            current.stopY = (int) event.getY();
-            check = 0;
-            String key = "";
-            int hinhAnh = 0;
-            int id = 0;
-            String hint = "";
-            //duyet mnag locatin de ve duong ke
-            for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
-                locations = GridViewPasscon.getListLocations().get(i);
+    public void onActionDown(MotionEvent event) {
+        if (mCount > 4) {
+            sISendDataService.sendData(-2, "", 0, "", 0);
+            mCount = 10;
+        } else {
+            paint.setColor(Color.WHITE);
+            indexes = true;
+            mCount = 0;
+            copyX = 0;
+            copyY = -10000;
+            if (lines.size() > 0) {
+                lines.clear();
+            }
+            if (listCircle.size() > 0) {
+                listCircle.clear();
+            }
+            sISendDataService.sendData(-1, "", 0, "", 0);
+            for (int i = 0; i < PatternLockView.getListPoint().size(); i++) {
+                Locations locations = PatternLockView.getListPoint().get(i);
                 int xCenter = locations.getX();
                 int yCenter = locations.getY();
-                float radius = locations.getRadius();
-                if (getDistance(current.stopX, current.stopY, xCenter, yCenter) <= radius) {
+                mRadiusPoint = (int) locations.getRadius();
+                String keyOnDown = locations.getKey();
+                int imageOnDown = locations.getImage();
+                int idOnDown = locations.getId();
+                String hintOnDown = locations.getHint();
+                if (getDistance(event.getX(), event.getY(), xCenter, yCenter) <= mRadiusPoint / 2) {
+                    joinX = xCenter;
+                    joinY = yCenter;
+                    sISendDataService.sendData(mCount, keyOnDown, imageOnDown, hintOnDown, i);
+                    mCount++;
+                    lines.add(new Line(xCenter, yCenter));
+                    listCircle.add(new Locations(xCenter, yCenter, RADIUS, keyOnDown, imageOnDown, hintOnDown, idOnDown));
+                }
+            }
+            invalidate();
+        }
+    }
+
+    public void onActionMove(MotionEvent event) {
+        if (lines.size() > 0 && mCount < 10 && indexes) {
+//            String keyOnMove;
+//            int imageOnMove;
+//            int idOnMove;
+//            String hintOnMove;
+            check = 0;
+            current = lines.get(lines.size() - 1);
+            current.stopX = (int) event.getX();
+            current.stopY = (int) event.getY();
+
+            //Browse array to draw line
+            for (int i = 0; i < PatternLockView.getListPoint().size(); i++) {
+                locations = PatternLockView.getListPoint().get(i);
+                int xCenter = locations.getX();
+                int yCenter = locations.getY();
+                mRadiusPoint = (int) locations.getRadius();
+                if (getDistance(current.stopX, current.stopY, xCenter, yCenter) <= mRadiusPoint / 2) {
                     current.stopX = xCenter;
                     current.stopY = yCenter;
                     copyX1 = xCenter;
@@ -151,63 +148,120 @@ public class DrawLine extends View implements IInterfaceChecked {
                     lines.add(new Line(current.stopX, current.stopY));
                 }
             }
-            //dung de ve cac cham tron
+            //Draw Points
             if (copyX1 != copyX || copyY1 != copyY) {
-
-                if (copyX1 < copyX || copyY1 < copyY) {
-                    for (int i = GridViewPasscon.getListLocations().size() - 1; i >= 0; i--) {
-                        Locations locations = GridViewPasscon.getListLocations().get(i);
-                        key = locations.getKey();
-                        hinhAnh = locations.getImage();
-                        id = locations.getId();
-                        hint = locations.getHint();
-                        int xCenter = locations.getX();
-                        int yCenter = locations.getY();
-                        float a = getDistance(copyX1, copyY1, copyX, copyY);
-                        float b = getDistance(copyX1, copyY1, xCenter, yCenter);
-                        float c = getDistance(copyX, copyY, xCenter, yCenter);
-                        float P = (a + b + c) / 2;
-                        float S = getS(P, a, b, c);
-                        if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
-                                (xCenter != copyX || yCenter != copyY)) {
-
-                            iInterSendData.sendData(dem, key, hinhAnh, hint, i);
-                            dem++;
-                            if (dem <= 10) {
-                                if (dem == 10) {
-                                    current.stopX = xCenter;
-                                    current.stopY = yCenter;
-                                }
-                                listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh, hint, id));
-                            }
-                        }
-                    }
+                if (copyX <= copyX1 && copyY <= copyY1) {
+                    drawFromStart();
+//                    for (int i = 0; i < PatternLockView.getListPoint().size(); i++) {
+//                        Locations locations = PatternLockView.getListPoint().get(i);
+//                        keyOnMove = locations.getKey();
+//                        imageOnMove = locations.getImage();
+//                        idOnMove = locations.getId();
+//                        hintOnMove = locations.getHint();
+//                        int xCenter = locations.getX();
+//                        int yCenter = locations.getY();
+//                        int a = (int) getDistance(copyX1, copyY1, copyX, copyY);
+//                        int b = (int) getDistance(copyX1, copyY1, xCenter, yCenter);
+//                        int c = (int) getDistance(copyX, copyY, xCenter, yCenter);
+//                        int P = (a + b + c) / 2;
+//                        int S = getS(P, a, b, c);
+//                        if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
+//                                (xCenter != copyX || yCenter != copyY)) {
+//                            sISendDataService.sendData(mCount, keyOnMove, imageOnMove, hintOnMove, i);
+//                            mCount++;
+//                            if (mCount <= 10) {
+//                                if (mCount == 10) {
+//                                    current.stopX = xCenter;
+//                                    current.stopY = yCenter;
+//                                }
+//                                listCircle.add(new Locations(xCenter, yCenter, RADIUS, keyOnMove, imageOnMove, hintOnMove, idOnMove));
+//                            }
+//                        }
+//                    }
+                } else if (copyY > copyY1) {
+                    drawReverse();
+//                    for (int i = PatternLockView.getListPoint().size() - 1; i >= 0; i--) {
+//                        Locations locations = PatternLockView.getListPoint().get(i);
+//                        keyOnMove = locations.getKey();
+//                        imageOnMove = locations.getImage();
+//                        idOnMove = locations.getId();
+//                        hintOnMove = locations.getHint();
+//                        int xCenter = locations.getX();
+//                        int yCenter = locations.getY();
+//                        int a = (int) getDistance(copyX1, copyY1, copyX, copyY);
+//                        int b = (int) getDistance(copyX1, copyY1, xCenter, yCenter);
+//                        int c = (int) getDistance(copyX, copyY, xCenter, yCenter);
+//                        int P = (a + b + c) / 2;
+//                        int S = getS(P, a, b, c);
+//                        if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
+//                                (xCenter != copyX || yCenter != copyY)) {
+//                            sISendDataService.sendData(mCount, keyOnMove, imageOnMove, hintOnMove, i);
+//                            mCount++;
+//                            if (mCount <= 10) {
+//                                if (mCount == 10) {
+//                                    current.stopX = xCenter;
+//                                    current.stopY = yCenter;
+//                                }
+//                                listCircle.add(new Locations(xCenter, yCenter, RADIUS, keyOnMove, imageOnMove, hintOnMove, idOnMove));
+//                            }
+//                        }
+//                    }
+                } else if (copyY < copyY1) {
+//                    for (int i = 0; i < PatternLockView.getListPoint().size(); i++) {
+//                        Locations locations = PatternLockView.getListPoint().get(i);
+//                        keyOnMove = locations.getKey();
+//                        imageOnMove = locations.getImage();
+//                        idOnMove = locations.getId();
+//                        hintOnMove = locations.getHint();
+//                        int xCenter = locations.getX();
+//                        int yCenter = locations.getY();
+//                        int a = (int) getDistance(copyX1, copyY1, copyX, copyY);
+//                        int b = (int) getDistance(copyX1, copyY1, xCenter, yCenter);
+//                        int c = (int) getDistance(copyX, copyY, xCenter, yCenter);
+//                        int P = (a + b + c) / 2;
+//                        int S = getS(P, a, b, c);
+//                        if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
+//                                (xCenter != copyX || yCenter != copyY)) {
+//                            sISendDataService.sendData(mCount, keyOnMove, imageOnMove, hintOnMove, i);
+//                            mCount++;
+//                            if (mCount <= 10) {
+//                                if (mCount == 10) {
+//                                    current.stopX = xCenter;
+//                                    current.stopY = yCenter;
+//                                }
+//                                listCircle.add(new Locations(xCenter, yCenter, RADIUS, keyOnMove, imageOnMove, hintOnMove, idOnMove));
+//                            }
+//                        }
+//                    }
+                    drawFromStart();
                 } else {
-                    for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
-                        Locations locations = GridViewPasscon.getListLocations().get(i);
-                        key = locations.getKey();
-                        hinhAnh = locations.getImage();
-                        id = locations.getId();
-                        hint = locations.getHint();
-                        int xCenter = locations.getX();
-                        int yCenter = locations.getY();
-                        float a = getDistance(copyX1, copyY1, copyX, copyY);
-                        float b = getDistance(copyX1, copyY1, xCenter, yCenter);
-                        float c = getDistance(copyX, copyY, xCenter, yCenter);
-                        float P = (a + b + c) / 2;
-                        float S = getS(P, a, b, c);
-                        if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter && (xCenter != copyX || yCenter != copyY)) {
-                            iInterSendData.sendData(dem, key, hinhAnh, hint, i);
-                            dem++;
-                            if (dem <= 10) {
-                                if (dem == 10) {
-                                    current.stopX = xCenter;
-                                    current.stopY = yCenter;
-                                }
-                                listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh, hint, id));
-                            }
-                        }
-                    }
+                    drawReverse();
+//                    for (int i = PatternLockView.getListPoint().size() - 1; i >= 0; i--) {
+//                        Locations locations = PatternLockView.getListPoint().get(i);
+//                        keyOnMove = locations.getKey();
+//                        imageOnMove = locations.getImage();
+//                        idOnMove = locations.getId();
+//                        hintOnMove = locations.getHint();
+//                        int xCenter = locations.getX();
+//                        int yCenter = locations.getY();
+//                        int a = (int) getDistance(copyX1, copyY1, copyX, copyY);
+//                        int b = (int) getDistance(copyX1, copyY1, xCenter, yCenter);
+//                        int c = (int) getDistance(copyX, copyY, xCenter, yCenter);
+//                        int P = (a + b + c) / 2;
+//                        int S = getS(P, a, b, c);
+//                        if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
+//                                (xCenter != copyX || yCenter != copyY)) {
+//                            sISendDataService.sendData(mCount, keyOnMove, imageOnMove, hintOnMove, i);
+//                            mCount++;
+//                            if (mCount <= 10) {
+//                                if (mCount == 10) {
+//                                    current.stopX = xCenter;
+//                                    current.stopY = yCenter;
+//                                }
+//                                listCircle.add(new Locations(xCenter, yCenter, RADIUS, keyOnMove, imageOnMove, hintOnMove, idOnMove));
+//                            }
+//                        }
+//                    }
                 }
                 copyX = copyX1;
                 copyY = copyY1;
@@ -218,18 +272,135 @@ public class DrawLine extends View implements IInterfaceChecked {
         }
     }
 
-    public static void setIInterface(IInterSendData iInterSendData) {
-        DrawLine.iInterSendData = iInterSendData;
-    }
-
-    @Override
-    public void onTabSelected() {
-        lines.clear();
-        listCircle.clear();
+    public void onActionUp() {
+        indexes = false;
+        if (lines.size() > 0 && mCount != 10) {
+            if (check == 0) {
+                Line lastLine = lines.remove(lines.size() - 1);
+                lastLine.stopX = joinX;
+                lastLine.stopY = joinY;
+            } else {
+                check = 0;
+            }
+        }
         invalidate();
     }
 
-    public interface IInterSendData {
-        void sendData(int position, String key, int hinhAnh, String hint, int index);
+    public void drawCircles(Canvas canvas) {
+        for (int i = 0; i < PatternLockView.getListPoint().size(); i++) {
+            locations = PatternLockView.getListPoint().get(i);
+            int xCenter = locations.getX();
+            int yCenter = locations.getY();
+            switch (i) {
+                case 0:
+                case 4:
+                case 15:
+                case 19:
+                    pCircle.setColor(Color.WHITE);
+                    canvas.drawCircle(xCenter, yCenter, RADIUS, pCircle);
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                case 5:
+                case 6:
+                case 7:
+                case 9:
+                case 11:
+                    pCircle.setColor(getResources().getColor(R.color.color_red_flag));
+                    canvas.drawCircle(xCenter, yCenter, RADIUS, pCircle);
+                    break;
+                case 8:
+                case 10:
+                case 12:
+                case 13:
+                case 14:
+                case 16:
+                case 17:
+                case 18:
+                    pCircle.setColor(getResources().getColor(R.color.color_blue_flag));
+                    canvas.drawCircle(xCenter, yCenter, RADIUS, pCircle);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void drawFromStart(){
+        for (int i = 0; i < PatternLockView.getListPoint().size(); i++) {
+            Locations locations = PatternLockView.getListPoint().get(i);
+            keyOnMove = locations.getKey();
+            imageOnMove = locations.getImage();
+            idOnMove = locations.getId();
+            hintOnMove = locations.getHint();
+            int xCenter = locations.getX();
+            int yCenter = locations.getY();
+            int a = (int) getDistance(copyX1, copyY1, copyX, copyY);
+            int b = (int) getDistance(copyX1, copyY1, xCenter, yCenter);
+            int c = (int) getDistance(copyX, copyY, xCenter, yCenter);
+            int P = (a + b + c) / 2;
+            int S = getS(P, a, b, c);
+            if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
+                    (xCenter != copyX || yCenter != copyY)) {
+                sISendDataService.sendData(mCount, keyOnMove, imageOnMove, hintOnMove, i);
+                mCount++;
+                if (mCount <= 10) {
+                    if (mCount == 10) {
+                        current.stopX = xCenter;
+                        current.stopY = yCenter;
+                    }
+                    listCircle.add(new Locations(xCenter, yCenter, RADIUS, keyOnMove, imageOnMove, hintOnMove, idOnMove));
+                }
+            }
+        }
+    }
+
+    public void drawReverse(){
+        for (int i = PatternLockView.getListPoint().size() - 1; i >= 0; i--) {
+            Locations locations = PatternLockView.getListPoint().get(i);
+            keyOnMove = locations.getKey();
+            imageOnMove = locations.getImage();
+            idOnMove = locations.getId();
+            hintOnMove = locations.getHint();
+            int xCenter = locations.getX();
+            int yCenter = locations.getY();
+            int a = (int) getDistance(copyX1, copyY1, copyX, copyY);
+            int b = (int) getDistance(copyX1, copyY1, xCenter, yCenter);
+            int c = (int) getDistance(copyX, copyY, xCenter, yCenter);
+            int P = (a + b + c) / 2;
+            int S = getS(P, a, b, c);
+            if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
+                    (xCenter != copyX || yCenter != copyY)) {
+                sISendDataService.sendData(mCount, keyOnMove, imageOnMove, hintOnMove, i);
+                mCount++;
+                if (mCount <= 10) {
+                    if (mCount == 10) {
+                        current.stopX = xCenter;
+                        current.stopY = yCenter;
+                    }
+                    listCircle.add(new Locations(xCenter, yCenter, RADIUS, keyOnMove, imageOnMove, hintOnMove, idOnMove));
+                }
+            }
+        }
+    }
+
+    public static void setISendDataService(ISendDataService iSendDataService) {
+        DrawLine.sISendDataService = iSendDataService;
+    }
+
+    @Override
+    public void sendData(int position, String key, int image, String hint, int index) {
+
+    }
+
+    @Override
+    public void ResetRequest() {
+        mCount = 0;
+        paint.setColor(Color.WHITE);
+        indexes = true;
+        lines.clear();
+        listCircle.clear();
+        invalidate();
     }
 }

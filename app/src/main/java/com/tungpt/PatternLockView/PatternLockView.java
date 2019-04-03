@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GridViewPasscon extends AppCompatActivity implements ILocations,
+public class PatternLockView extends AppCompatActivity implements ILocations,
         ISendDataService, View.OnClickListener {
 
     private static List<Locations> sListPoint;
@@ -24,66 +25,70 @@ public class GridViewPasscon extends AppCompatActivity implements ILocations,
     private static List<Locations> sListPointNoAction;
     private static ImageView[] mImageViews;
     private static TextView[] mTextViews;
-    private static Button mButtonReset;
+    protected static Button mButtonReset;
     private static ISendDataService sInterfaceChecked;
-
-    private List<Locations> sListPointRandom;
     private List<Locations> mIconPasscons;
     private Animation mAnimation;
     private AdapterItemPatternLockView mAdapterGridViewSelectIcon;
     private GridView mGridView;
-    private ImageView img1, img2, img3, img4, img5, img6, img7, img8, img9, img10;
-    private TextView text1, text2, text3, text4, text5, text6, text7, text8, text9, text10;
-    private View mViewDrawLine;
+    private ImageView img1;
+    private ImageView img2;
+    private ImageView img3;
+    private ImageView img4;
+    private ImageView img5;
+    private ImageView img6;
+    private ImageView img7;
+    private ImageView img8;
+    private ImageView img9;
+    private ImageView img10;
+    private TextView text1;
+    private TextView text2;
+    private TextView text3;
+    private TextView text4;
+    private TextView text5;
+    private TextView text6;
+    private TextView text7;
+    private TextView text8;
+    private TextView text9;
+    private TextView text10;
     private ImageView mImageViewContent;
-
-    private int count;
-
-    public static Button getButtonReset() {
-        return mButtonReset;
-    }
-
-    public static TextView[] getmTextViews() {
-        return mTextViews;
-    }
-
-    public static void setmTextViews(TextView[] mTextViews) {
-        GridViewPasscon.mTextViews = mTextViews;
-    }
-
-    public static ImageView[] getmImageViews() {
-        return mImageViews;
-    }
-
-    public static void setmImageViews(ImageView[] mImageViews) {
-        GridViewPasscon.mImageViews = mImageViews;
-    }
+    private ImageView mImageViewBack;
 
     public static List<Locations> getListPoint() {
         return sListPoint;
     }
 
     public static void setListPoint(List<Locations> listPoint) {
-        GridViewPasscon.sListPoint = listPoint;
+        PatternLockView.sListPoint = listPoint;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_grid_view_passcon);
+        setContentView(R.layout.activity_pattern_lock_view);
         DrawLine.setISendDataService(this);
         initView();
+        mButtonReset.setEnabled(true);
+        ScaleAnimation fade_in = new ScaleAnimation(
+                0f,
+                1f,
+                0f,
+                1f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        fade_in.setDuration(600);
+        fade_in.setFillAfter(true);
+        mImageViewContent.startAnimation(fade_in);
     }
 
     public void initView() {
         sListPoint = new ArrayList<>();
         sListPointOnMove = new ArrayList<>();
         sListPointNoAction = new ArrayList<>();
-        sListPointRandom = new ArrayList<>();
         mIconPasscons = new ArrayList<>();
         mGridView = findViewById(R.id.grid_view);
-        mViewDrawLine = findViewById(R.id.view_draw_line);
         mImageViewContent = findViewById(R.id.img_content);
+        mImageViewBack = findViewById(R.id.img_back_pattern_lock);
         mButtonReset = findViewById(R.id.btn_reset);
 
         img1 = findViewById(R.id.img_1);
@@ -109,6 +114,7 @@ public class GridViewPasscon extends AppCompatActivity implements ILocations,
         text10 = findViewById(R.id.text_result10);
 
         mButtonReset.setOnClickListener(this);
+        mImageViewBack.setOnClickListener(this);
 
         mImageViews = new ImageView[10];
         mImageViews[0] = img1;
@@ -149,7 +155,6 @@ public class GridViewPasscon extends AppCompatActivity implements ILocations,
         mIconPasscons = sListPoint;
         mAdapterGridViewSelectIcon = new AdapterItemPatternLockView(this, mIconPasscons, this);
         mGridView.setAdapter(mAdapterGridViewSelectIcon);
-
     }
 
     @Override
@@ -172,6 +177,8 @@ public class GridViewPasscon extends AppCompatActivity implements ILocations,
                 mTextViews[i].setVisibility(View.GONE);
             }
 
+        } else if (position == -2) {
+
         } else {
             if (position < 10) {
                 mAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -186,19 +193,16 @@ public class GridViewPasscon extends AppCompatActivity implements ILocations,
                     mTextViews[position].startAnimation(mAnimation);
                     mTextViews[position].setText(image + "");
                 }
-
             }
         }
     }
 
     @Override
-    public void ResetRequest() {
-
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.img_back_pattern_lock:
+                finish();
+                break;
             case R.id.btn_reset:
                 sInterfaceChecked.ResetRequest();
                 sListPointOnMove.clear();
@@ -207,75 +211,16 @@ public class GridViewPasscon extends AppCompatActivity implements ILocations,
                     mTextViews[i].setVisibility(View.GONE);
                 }
                 break;
-            case R.id.btn_confirm:
-                mButtonReset.setEnabled(false);
-                sListPointOnMove.clear();
-                for (int i = 0; i < mImageViews.length; i++) {
-                    mImageViews[i].setVisibility(View.GONE);
-                    mTextViews[i].setVisibility(View.GONE);
-                }
             default:
                 break;
-
         }
     }
 
-    public void randomPattern() {
-        sListPointNoAction.clear();
-        sListPointRandom.clear();
-        for (int i = 0; i < mIconPasscons.size(); i++) {
-            int dem = 0;
-            Locations location = mIconPasscons.get(i);
-            for (int j = 0; j < sListPointOnMove.size(); j++) {
-                Locations locations = sListPointOnMove.get(j);
-                if (i == locations.getmId()) {
-                    dem++;
-                }
-            }
-            if (dem == 0) {
-                sListPointNoAction.add(new Locations(0,
-                        0,
-                        0,
-                        location.getKey(),
-                        location.getImage(),
-                        location.getHint(), i));
-            }
-        }
-        //random B
-        Collections.shuffle(sListPointNoAction);
-        for (int i = 0; i < sListPointNoAction.size(); i++) {
-            Locations location = sListPointNoAction.get(i);
-            sListPointRandom.add(new Locations(0,
-                    0,
-                    0,
-                    location.getKey(),
-                    location.getImage(),
-                    location.getHint(), i));
-        }
-        for (int i = 0; i < sListPoint.size(); i++) {
-            int dem = 0;
-            Locations location = null;
-            if (sListPointRandom.size() != 0)
-                location = sListPointRandom.get(0);
-            for (int j = 0; j < sListPointOnMove.size(); j++) {
-                Locations locations = sListPointOnMove.get(j);
-                if (i == locations.getmId()) {
-                    dem = 1;
-                    location = locations;
-                }
-            }
-            location.setmId(i);
-            sListPoint.set(i, location);
-            if (dem != 1) {
-                sListPointRandom.remove(0);
-            }
-        }
-        mIconPasscons = sListPoint;
-        mAdapterGridViewSelectIcon = new AdapterItemPatternLockView(this, mIconPasscons, this);
-        mGridView.setAdapter(mAdapterGridViewSelectIcon);
-    }
+    @Override
+    public void ResetRequest() {
 
+    }
     public static void setISendDataService(ISendDataService iSendDataService) {
-        GridViewPasscon.sInterfaceChecked = iSendDataService;
+        PatternLockView.sInterfaceChecked = iSendDataService;
     }
 }

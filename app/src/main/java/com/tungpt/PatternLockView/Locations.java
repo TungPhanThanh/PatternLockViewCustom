@@ -9,11 +9,11 @@ public class Locations {
     private String hint;
     private int mId;
 
-    public Locations() {
+    Locations() {
 
     }
 
-    public Locations(int x, int y, float radius, String key, int image, String hint, int mId) {
+    Locations(int x, int y, float radius, String key, int image, String hint, int mId) {
         this.x = x;
         this.y = y;
         this.radius = radius;

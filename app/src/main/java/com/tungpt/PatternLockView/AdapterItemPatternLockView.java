@@ -1,5 +1,6 @@
 package com.tungpt.PatternLockView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -15,26 +16,26 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterGridViewSelectIcon extends BaseAdapter {
+public class AdapterItemPatternLockView extends BaseAdapter {
     private Context context;
     private List<Locations> listIcon;
-    private int dem = -1;
-    private static List<Locations> list;
-    private IILocations iiLocations;
+    private static List<Locations> listPoints;
+    private ILocations iLocations;
+    private int count = -1;
 
-    public static List<Locations> getList() {
-        return list;
+    public static List<Locations> getListPoints() {
+        return listPoints;
     }
 
-    public static void setList(List<Locations> list) {
-        AdapterGridViewSelectIcon.list = list;
+    public static void setListPoints(List<Locations> listPoints) {
+        AdapterItemPatternLockView.listPoints = listPoints;
     }
 
-    public AdapterGridViewSelectIcon(Context context, List<Locations> listIcon, IILocations iiLocations) {
-        list = new ArrayList<>();
+    public AdapterItemPatternLockView(Context context, List<Locations> listIcon, ILocations iLocations) {
+        listPoints = new ArrayList<>();
         this.context = context;
         this.listIcon = listIcon;
-        this.iiLocations = iiLocations;
+        this.iLocations = iLocations;
     }
 
     @Override
@@ -52,18 +53,20 @@ public class AdapterGridViewSelectIcon extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            assert inflater != null;
             convertView = inflater.inflate(R.layout.item_gridview_selecticon, null);
         }
         final Locations iconPasscon = listIcon.get(position);
-        final ImageView imIcon = (ImageView) convertView.findViewById(R.id.im_icon);
-        TextView txtSelectIcon = (TextView) convertView.findViewById(R.id.txt_select_icon);
-        final FrameLayout frameLayout = (FrameLayout) convertView.findViewById(R.id.layout_item_gridview);
-        String flagHinhAnh = iconPasscon.getImage() + "";
-        if (flagHinhAnh.length() > 1) {
+        final ImageView imIcon = convertView.findViewById(R.id.im_icon);
+        TextView txtSelectIcon = convertView.findViewById(R.id.txt_select_icon);
+        final FrameLayout frameLayout = convertView.findViewById(R.id.layout_item_gridview);
+        String imgFlag = iconPasscon.getImage() + "";
+        if (imgFlag.length() > 1) {
             imIcon.setImageResource(iconPasscon.getImage());
         } else {
             imIcon.setVisibility(View.GONE);
@@ -79,26 +82,20 @@ public class AdapterGridViewSelectIcon extends BaseAdapter {
             @Override
             public void onGlobalLayout() {
                 frameLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                if (position != dem) {
-                    list.add(getLocationPoint(finalConvertView, iconPasscon.getKey(), iconPasscon.getImage(), position, iconPasscon.getHint()));
-                    dem = position;
+                if (position != count) {
+                    listPoints.add(getLocationPoint(finalConvertView, iconPasscon.getKey(), iconPasscon.getImage(), position, iconPasscon.getHint()));
+                    count = position;
                 }
                 if (position == 19) {
-                    iiLocations.sendListLocations(list);
+                    iLocations.sendListLocations(listPoints);
                 }
             }
         });
-
         return convertView;
     }
-
-    private Locations getLocationPoint(View view, String key, int hinhAnh, int id, String hint) {
+    private Locations getLocationPoint(View view, String key, int image, int id, String hint) {
         int x = (int) (view.getX() + view.getWidth() / 2);
         int y = (int) (view.getY() + view.getHeight() / 2);
-        return new Locations(x, y, view.getWidth() / 2, key, hinhAnh, hint, id);
-    }
-
-    public interface IILocations {
-        void sendListLocations(List<Locations> list);
+        return new Locations(x, y, view.getWidth() / 2, key, image, hint, id);
     }
 }

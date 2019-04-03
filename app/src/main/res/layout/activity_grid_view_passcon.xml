@@ -8,7 +8,7 @@
     tools:context=".GridViewPasscon">
 
     <ImageView
-        android:id="@+id/img_logo"
+        android:id="@+id/text_logo"
         android:layout_width="110dp"
         android:layout_height="48dp"
         android:src="@drawable/bi_idall_signin_h"
@@ -23,11 +23,11 @@
         android:id="@+id/linear_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_below="@+id/img_logo"
+        android:layout_below="@+id/text_logo"
         android:layout_marginBottom="@dimen/dp_12"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/img_logo"
+        app:layout_constraintTop_toBottomOf="@id/text_logo"
         android:visibility="gone">
 
         <Button
@@ -47,36 +47,6 @@
             android:textColor="@color/selected_button_text" />
 
     </LinearLayout>
-
-    <!--<RelativeLayout-->
-    <!--android:id="@+id/relative_grid"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="275dp"-->
-    <!--android:layout_below="@+id/linear_button"-->
-    <!--android:layout_centerHorizontal="true"-->
-    <!--android:background="#e6031940">-->
-
-    <!--<GridView-->
-    <!--android:id="@+id/grid_view"-->
-    <!--android:layout_width="300dp"-->
-    <!--android:layout_height="275dp"-->
-    <!--android:layout_centerHorizontal="true"-->
-    <!--android:numColumns="5" />-->
-
-    <!--<ImageView-->
-    <!--android:id="@+id/img_content"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="#4D6D7EDF" />-->
-
-    <!--<com.tungpt.PatternLockView.DrawLine-->
-    <!--android:id="@+id/view_draw_line"-->
-    <!--android:layout_width="305dp"-->
-    <!--android:layout_height="280dp"-->
-    <!--android:layout_centerInParent="true"-->
-    <!--android:background="#00F7F7F7" />-->
-
-    <!--</RelativeLayout>-->
 
     <ImageView
         android:layout_width="0dp"
@@ -106,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="275dp"
         android:layout_marginBottom="8dp"
-        android:background="#4D6D7EDF"
+        android:background="#BF04052C"
         app:layout_constraintBottom_toBottomOf="@id/grid_view"
         app:layout_constraintTop_toTopOf="@id/grid_view"
         app:layout_constraintVertical_bias="0.0"
@@ -118,7 +88,7 @@
         android:layout_height="280dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
-        android:background="#00F7F7F7"
+        android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/img_content"
         app:layout_constraintEnd_toEndOf="@+id/img_content"
         app:layout_constraintStart_toStartOf="@+id/img_content"
@@ -336,23 +306,22 @@
         android:id="@+id/btn_reset"
         android:layout_width="300dp"
         android:layout_height="45dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/shape_button_next_press"
         android:text="Reset"
         android:textAllCaps="false"
         android:textColor="#fff"
         android:textSize="15sp"
         android:textStyle="normal"
-        app:layout_constraintEnd_toEndOf="@+id/btn_confirm"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/btn_confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linear_icon" />
 
     <Button
         android:id="@+id/btn_confirm"
         android:layout_width="300dp"
         android:layout_height="45dp"
-        android:layout_below="@id/linear_icon"
         android:background="@drawable/shape_button_next_press"
         android:text="Confirm Password"
         android:textAllCaps="false"
@@ -361,9 +330,8 @@
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_reset"
-        app:layout_constraintVertical_bias="0.177" />
+        android:visibility="gone"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -3,7 +3,7 @@ package com.tungpt.PatternLockView;
 public class Line {
     int startX, startY, stopX, stopY;
 
-    public Line(int startX, int startY, int stopX, int stopY) {
+    private Line(int startX, int startY, int stopX, int stopY) {
         this.startX = startX;
         this.startY = startY;
         this.stopX = stopX;
@@ -11,7 +11,7 @@ public class Line {
 
 
     }
-    public Line(int startX, int startY) {
+    Line(int startX, int startY) {
         this(startX, startY, startX, startY);
     }
 
