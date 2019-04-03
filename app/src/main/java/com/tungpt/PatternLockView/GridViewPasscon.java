@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -11,7 +12,6 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,10 +25,9 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
     private Animation mAnimation;
     private AdapterGridViewSelectIcon mAdapterGridViewSelectIcon;
     private GridView mGridView;
-    private RelativeLayout relativeLayout;
     private ImageView img1, img2, img3, img4, img5, img6, img7, img8, img9, img10;
     private TextView text1, text2, text3, text4, text5, text6, text7, text8, text9, text10;
-    private Button btn_reset;
+    private Button mButtonReset, mButtonConfirm;
     private ImageView[] mImageViews;
     private TextView[] mTextViews;
     private Button mButtonTap, mButtonSwipe;
@@ -38,6 +37,10 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
     private static List<Locations> listLocationA;
     private static List<Locations> listLocationB;
     private List<Locations> locationsListC;
+    private List<Integer> arrayPassword;
+    private List<Integer> arrayConfirm;
+    private int count;
+
 
     public static List<Locations> getListLocations() {
         return listLocations;
@@ -53,16 +56,17 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
         setContentView(R.layout.activity_grid_view_passcon);
         DrawLine.setIInterface(this);
         initView();
+        mButtonReset.setEnabled(true);
 
     }
 
     public void initView() {
         listLocations = new ArrayList<>();
         mGridView = findViewById(R.id.grid_view);
-        relativeLayout = findViewById(R.id.layout_main);
         mViewDrawLine = findViewById(R.id.view_draw_line);
         mImageViewContent = findViewById(R.id.img_content);
-        btn_reset = findViewById(R.id.btn_reset);
+        mButtonReset = findViewById(R.id.btn_reset);
+        mButtonConfirm = findViewById(R.id.btn_confirm);
 
         img1 = findViewById(R.id.img_1);
         img2 = findViewById(R.id.img_2);
@@ -91,7 +95,8 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
 
         mButtonTap.setOnClickListener(this);
         mButtonSwipe.setOnClickListener(this);
-        btn_reset.setOnClickListener(this);
+        mButtonReset.setOnClickListener(this);
+        mButtonConfirm.setOnClickListener(this);
         mButtonSwipe.performClick();
 
         mImageViews = new ImageView[10];
@@ -124,10 +129,19 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
         mIconPasscons = new ArrayList<>();
         mIconPasscons = DatabaseHelp.getListIcon();
 
+        arrayPassword = new ArrayList<Integer>();
+        arrayConfirm = new ArrayList<Integer>();
+
         Collections.shuffle(mIconPasscons);
         for (int i = 0; i < mIconPasscons.size(); i++) {
             Locations locations = mIconPasscons.get(i);
-            listLocations.add(new Locations(0, 0, 0, locations.getKey(), locations.getImage(), locations.getHint(), i));
+            listLocations.add(new Locations(0,
+                    0,
+                    0,
+                    locations.getKey(),
+                    locations.getImage(),
+                    locations.getHint(),
+                    i));
         }
         mIconPasscons = listLocations;
         mAdapterGridViewSelectIcon = new AdapterGridViewSelectIcon(this, mIconPasscons, this);
@@ -150,11 +164,11 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
     public void sendData(int position, String key, int image, String hint, int index) {
         if (position == -1) {
             listLocationA.clear();
+            arrayConfirm.clear();
             for (int i = 0; i < mImageViews.length; i++) {
-                mAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
-                        R.anim.item_animation_right_side);
                 mImageViews[i].setVisibility(View.GONE);
                 mTextViews[i].setVisibility(View.GONE);
+
             }
 
         } else {
@@ -162,16 +176,23 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
                 mAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                         R.anim.item_animation_right_side);
                 listLocationA.add(new Locations(0, 0, 0, key, image, hint, index));
+                Log.d("array", "sendData: " + index);
                 if ((image + "").length() > 1) {
                     mImageViews[position].setVisibility(View.VISIBLE);
-//                    mImageViews[position].startAnimation(mAnimation);
+                    mImageViews[position].startAnimation(mAnimation);
                     mImageViews[position].setImageResource(image);
                 } else {
                     mTextViews[position].setVisibility(View.VISIBLE);
-//                    mTextViews[position].startAnimation(mAnimation);
+                    mTextViews[position].startAnimation(mAnimation);
                     mTextViews[position].setText(image + "");
                 }
 
+                if (count == 1) {
+                    arrayConfirm.add(index);
+                }
+                if ((position + 1) == arrayPassword.size() && compareArray() == true) {
+                    startActivity(MainActivity.getIntent(this));
+                }
             }
         }
     }
@@ -216,53 +237,102 @@ public class GridViewPasscon extends AppCompatActivity implements AdapterGridVie
                 sInterfaceChecked.onTabSelected();
                 break;
             case R.id.btn_reset:
-                listLocationB.clear();
-                locationsListC.clear();
-                for (int i = 0; i < mIconPasscons.size(); i++) {
-                    int dem = 0;
-                    Locations location = mIconPasscons.get(i);
-                    for (int j = 0; j < listLocationA.size(); j++) {
-                        Locations locations = listLocationA.get(j);
-                        if (i == locations.getmId()) {
-                            dem++;
-                        }
-                    }
-                    if (dem == 0) {
-                        listLocationB.add(new Locations(0, 0, 0, location.getKey(), location.getImage(), location.getHint(), i));
-                    }
+                sInterfaceChecked.onTabSelected();
+                listLocationA.clear();
+                for (int i = 0; i < mImageViews.length; i++) {
+                    mImageViews[i].setVisibility(View.GONE);
+                    mTextViews[i].setVisibility(View.GONE);
                 }
-                //random B
-                Collections.shuffle(listLocationB);
-                for (int i = 0; i < listLocationB.size(); i++) {
-                    Locations location = listLocationB.get(i);
-                    locationsListC.add(new Locations(0, 0, 0, location.getKey(), location.getImage(), location.getHint(), i));
-                }
-                for (int i = 0; i < listLocations.size(); i++) {
-                    int dem = 0;
-                    Locations location = null;
-                    if (locationsListC.size() != 0)
-                        location = locationsListC.get(0);
-                    for (int j = 0; j < listLocationA.size(); j++) {
-                        Locations locations = listLocationA.get(j);
-                        if (i == locations.getmId()) {
-                            dem = 1;
-                            location = locations;
-                        }
-                    }
-                    location.setmId(i);
-                    listLocations.set(i, location);
-                    if (dem != 1) {
-                        locationsListC.remove(0);
-                    }
-                }
-                mIconPasscons = listLocations;
-                mAdapterGridViewSelectIcon = new AdapterGridViewSelectIcon(this, mIconPasscons, this);
-                mGridView.setAdapter(mAdapterGridViewSelectIcon);
+//                randomPattern();
                 break;
+            case R.id.btn_confirm:
+                mButtonReset.setEnabled(false);
+                if (count == 0) {
+                    for (int i = 0; i < listLocationA.size(); i++) {
+                        arrayPassword.add(listLocationA.get(i).getmId());
+                    }
+                    count = 1;
+                    arrayConfirm.clear();
+                    sInterfaceChecked.onTabSelected();
+                    listLocationA.clear();
+                    for (int i = 0; i < mImageViews.length; i++) {
+                        mImageViews[i].setVisibility(View.GONE);
+                        mTextViews[i].setVisibility(View.GONE);
+                    }
+                }
             default:
                 break;
 
         }
+    }
+
+    public void randomPattern() {
+        listLocationB.clear();
+        locationsListC.clear();
+        for (int i = 0; i < mIconPasscons.size(); i++) {
+            int dem = 0;
+            Locations location = mIconPasscons.get(i);
+            for (int j = 0; j < listLocationA.size(); j++) {
+                Locations locations = listLocationA.get(j);
+                if (i == locations.getmId()) {
+                    dem++;
+                }
+            }
+            if (dem == 0) {
+                listLocationB.add(new Locations(0,
+                        0,
+                        0,
+                        location.getKey(),
+                        location.getImage(),
+                        location.getHint(), i));
+            }
+        }
+        //random B
+        Collections.shuffle(listLocationB);
+        for (int i = 0; i < listLocationB.size(); i++) {
+            Locations location = listLocationB.get(i);
+            locationsListC.add(new Locations(0,
+                    0,
+                    0,
+                    location.getKey(),
+                    location.getImage(),
+                    location.getHint(), i));
+        }
+        for (int i = 0; i < listLocations.size(); i++) {
+            int dem = 0;
+            Locations location = null;
+            if (locationsListC.size() != 0)
+                location = locationsListC.get(0);
+            for (int j = 0; j < listLocationA.size(); j++) {
+                Locations locations = listLocationA.get(j);
+                if (i == locations.getmId()) {
+                    dem = 1;
+                    location = locations;
+                }
+            }
+            location.setmId(i);
+            listLocations.set(i, location);
+            if (dem != 1) {
+                locationsListC.remove(0);
+            }
+        }
+        mIconPasscons = listLocations;
+        mAdapterGridViewSelectIcon = new AdapterGridViewSelectIcon(this, mIconPasscons, this);
+        mGridView.setAdapter(mAdapterGridViewSelectIcon);
+    }
+
+    public boolean compareArray() {
+        int check = 0;
+        if (arrayConfirm.size() == arrayPassword.size()) {
+            for (int i = 0; i < arrayPassword.size(); i++) {
+                if (arrayPassword.get(i) == arrayConfirm.get(i)) {
+                    check++;
+                }
+            }
+            if (check == arrayConfirm.size())
+                return true;
+        }
+        return false;
     }
 
     public static void setInterfaceChecked(IInterfaceChecked sInterfaceChecked) {

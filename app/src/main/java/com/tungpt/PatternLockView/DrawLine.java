@@ -12,7 +12,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawLine extends View implements IInterfaceChecked{
+public class DrawLine extends View implements IInterfaceChecked {
     Paint paint = new Paint();
     ArrayList<Line> lines = new ArrayList<Line>();
     int joinX, joinY = -1;
@@ -26,6 +26,10 @@ public class DrawLine extends View implements IInterfaceChecked{
     int copyY1 = -1;
     float EPSILON = 0.001f;
     int count = 0;
+    int xCenter;
+    int yCenter;
+    private Locations locations;
+
 
     public DrawLine(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -75,7 +79,7 @@ public class DrawLine extends View implements IInterfaceChecked{
                 if (listCircle.size() > 0) {
                     listCircle.clear();
                 }
-                iInterSendData.sendData(-1, "", 0,"",0);
+                iInterSendData.sendData(-1, "", 0, "", 0);
 
                 for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
                     Locations locations = GridViewPasscon.getListLocations().get(i);
@@ -90,106 +94,16 @@ public class DrawLine extends View implements IInterfaceChecked{
                         joinX = xCenter;
                         joinY = yCenter;
                         Log.d("hihi", "Key :" + key);
-                        iInterSendData.sendData(dem, key, hinhAnh,hint,i);
+                        iInterSendData.sendData(dem, key, hinhAnh, hint, i);
                         dem++;
                         lines.add(new Line(xCenter, yCenter));
-                        listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh,hint, id));
+                        listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh, hint, id));
                     }
                 }
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (lines.size() > 0 && dem < 10) {
-                    Line current = lines.get(lines.size() - 1);
-                    current.stopX = (int) event.getX();
-                    current.stopY = (int) event.getY();
-                    check = 0;
-                    String key = "";
-                    int hinhAnh = 0;
-                    int id = 0;
-                    String hint = "";
-                    //duyet mnag locatin de ve duong ke
-                    for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
-                        Locations locations = GridViewPasscon.getListLocations().get(i);
-                        int xCenter = locations.getX();
-                        int yCenter = locations.getY();
-                        float radius = locations.getRadius();
-                        if (getDistance(current.stopX, current.stopY, xCenter, yCenter) <= radius) {
-                            current.stopX = xCenter;
-                            current.stopY = yCenter;
-                            copyX1 = xCenter;
-                            copyY1 = yCenter;
-                            check = 1;
-                            lines.add(new Line(current.stopX, current.stopY));
-                        }
-                    }
-                    //dung de ve cac cham tron
-                    if (copyX1 != copyX || copyY1 != copyY) {
-
-                        if (copyX1 < copyX || copyY1 < copyY) {
-                            for (int i = GridViewPasscon.getListLocations().size() - 1; i >= 0; i--) {
-                                Locations locations = GridViewPasscon.getListLocations().get(i);
-                                key = locations.getKey();
-                                hinhAnh = locations.getImage();
-                                id = locations.getId();
-                                hint = locations.getHint();
-                                int xCenter = locations.getX();
-                                int yCenter = locations.getY();
-                                float a = getDistance(copyX1, copyY1, copyX, copyY);
-                                float b = getDistance(copyX1, copyY1, xCenter, yCenter);
-                                float c = getDistance(copyX, copyY, xCenter, yCenter);
-                                float P = (a + b + c) / 2;
-                                float S = getS(P, a, b, c);
-                                if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
-                                        (xCenter != copyX || yCenter != copyY)) {
-
-                                    iInterSendData.sendData(dem, key, hinhAnh,hint,i);
-                                    dem++;
-                                    if (dem <= 10) {
-                                        if (dem == 10)
-                                        {
-                                            current.stopX = xCenter;
-                                            current.stopY = yCenter;
-                                        }
-                                        listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh,hint, id));
-                                    }
-                                }
-                            }
-                        } else {
-                            for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
-                                Locations locations = GridViewPasscon.getListLocations().get(i);
-                                key = locations.getKey();
-                                hinhAnh = locations.getImage();
-                                id = locations.getId();
-                                hint = locations.getHint();
-                                int xCenter = locations.getX();
-                                int yCenter = locations.getY();
-                                float a = getDistance(copyX1, copyY1, copyX, copyY);
-                                float b = getDistance(copyX1, copyY1, xCenter, yCenter);
-                                float c = getDistance(copyX, copyY, xCenter, yCenter);
-                                float P = (a + b + c) / 2;
-                                float S = getS(P, a, b, c);
-                                if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter && (xCenter != copyX || yCenter != copyY)) {
-                                    iInterSendData.sendData(dem, key, hinhAnh,hint,i);
-                                    dem++;
-                                    if (dem <= 10) {
-                                        if (dem == 10)
-                                        {
-                                            current.stopX = xCenter;
-                                            current.stopY = yCenter;
-                                        }
-                                        listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh,hint, id));
-                                    }
-                                }
-                            }
-                        }
-                        copyX = copyX1;
-                        copyY = copyY1;
-                    }
-                    joinX = (int) event.getX();
-                    joinY = (int) event.getY();
-                    invalidate();
-                }
+                onActionMove(event);
                 break;
             case MotionEvent.ACTION_UP:
                 if (lines.size() > 0) {
@@ -201,9 +115,9 @@ public class DrawLine extends View implements IInterfaceChecked{
                         check = 0;
                     }
                 }
-                if (listCircle.size() < 4){
+                if (listCircle.size() < 4) {
                     paint.setColor(Color.RED);
-                }else {
+                } else {
                     paint.setColor(Color.GREEN);
                 }
                 invalidate();
@@ -212,6 +126,97 @@ public class DrawLine extends View implements IInterfaceChecked{
         return true;
     }
 
+    public void onActionMove(MotionEvent event) {
+        if (lines.size() > 0 && dem < 10) {
+            Line current = lines.get(lines.size() - 1);
+            current.stopX = (int) event.getX();
+            current.stopY = (int) event.getY();
+            check = 0;
+            String key = "";
+            int hinhAnh = 0;
+            int id = 0;
+            String hint = "";
+            //duyet mnag locatin de ve duong ke
+            for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
+                locations = GridViewPasscon.getListLocations().get(i);
+                int xCenter = locations.getX();
+                int yCenter = locations.getY();
+                float radius = locations.getRadius();
+                if (getDistance(current.stopX, current.stopY, xCenter, yCenter) <= radius) {
+                    current.stopX = xCenter;
+                    current.stopY = yCenter;
+                    copyX1 = xCenter;
+                    copyY1 = yCenter;
+                    check = 1;
+                    lines.add(new Line(current.stopX, current.stopY));
+                }
+            }
+            //dung de ve cac cham tron
+            if (copyX1 != copyX || copyY1 != copyY) {
+
+                if (copyX1 < copyX || copyY1 < copyY) {
+                    for (int i = GridViewPasscon.getListLocations().size() - 1; i >= 0; i--) {
+                        Locations locations = GridViewPasscon.getListLocations().get(i);
+                        key = locations.getKey();
+                        hinhAnh = locations.getImage();
+                        id = locations.getId();
+                        hint = locations.getHint();
+                        int xCenter = locations.getX();
+                        int yCenter = locations.getY();
+                        float a = getDistance(copyX1, copyY1, copyX, copyY);
+                        float b = getDistance(copyX1, copyY1, xCenter, yCenter);
+                        float c = getDistance(copyX, copyY, xCenter, yCenter);
+                        float P = (a + b + c) / 2;
+                        float S = getS(P, a, b, c);
+                        if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter &&
+                                (xCenter != copyX || yCenter != copyY)) {
+
+                            iInterSendData.sendData(dem, key, hinhAnh, hint, i);
+                            dem++;
+                            if (dem <= 10) {
+                                if (dem == 10) {
+                                    current.stopX = xCenter;
+                                    current.stopY = yCenter;
+                                }
+                                listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh, hint, id));
+                            }
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < GridViewPasscon.getListLocations().size(); i++) {
+                        Locations locations = GridViewPasscon.getListLocations().get(i);
+                        key = locations.getKey();
+                        hinhAnh = locations.getImage();
+                        id = locations.getId();
+                        hint = locations.getHint();
+                        int xCenter = locations.getX();
+                        int yCenter = locations.getY();
+                        float a = getDistance(copyX1, copyY1, copyX, copyY);
+                        float b = getDistance(copyX1, copyY1, xCenter, yCenter);
+                        float c = getDistance(copyX, copyY, xCenter, yCenter);
+                        float P = (a + b + c) / 2;
+                        float S = getS(P, a, b, c);
+                        if (S == 0 && b + c <= a && joinX != xCenter && joinY != yCenter && (xCenter != copyX || yCenter != copyY)) {
+                            iInterSendData.sendData(dem, key, hinhAnh, hint, i);
+                            dem++;
+                            if (dem <= 10) {
+                                if (dem == 10) {
+                                    current.stopX = xCenter;
+                                    current.stopY = yCenter;
+                                }
+                                listCircle.add(new Locations(xCenter, yCenter, 7, key, hinhAnh, hint, id));
+                            }
+                        }
+                    }
+                }
+                copyX = copyX1;
+                copyY = copyY1;
+            }
+            joinX = (int) event.getX();
+            joinY = (int) event.getY();
+            invalidate();
+        }
+    }
 
     public static void setIInterface(IInterSendData iInterSendData) {
         DrawLine.iInterSendData = iInterSendData;
@@ -225,6 +230,6 @@ public class DrawLine extends View implements IInterfaceChecked{
     }
 
     public interface IInterSendData {
-        void sendData(int position, String key, int hinhAnh, String hint,int index);
+        void sendData(int position, String key, int hinhAnh, String hint, int index);
     }
 }
